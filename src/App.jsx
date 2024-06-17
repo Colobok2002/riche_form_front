@@ -4,7 +4,7 @@ import SurveyList from './components/SurveyList';
 import SurveyEdit from './components/SurveyEdit';
 import SurveyRespond from './components/SurveyRespond';
 import SurveyResponses from './components/SurveyResponses';
-import SurveyCreate from './components/SurveyCreate';
+import SurveyCreate from './components/SurveyCreate/SurveyCreate';
 
 const App = ({ favoriteLinks, setFavoriteLinks, menu, setOpenMenu }) => {
   const mockSurvey = {

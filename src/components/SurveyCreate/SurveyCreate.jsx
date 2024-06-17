@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Button, Input, Space, Radio, Checkbox } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
+import "./SurveyCreate.scss"
+
 const SurveyCreate = () => {
   const [questions, setQuestions] = useState([{ type: 'single', question: '', options: [''] }]);
 
@@ -47,15 +49,19 @@ const SurveyCreate = () => {
       <h1>Создание нового опроса</h1>
       {questions.map((q, qIndex) => (
         <div key={qIndex} className="question-container">
-          <Input
-            placeholder="Введите вопрос"
-            value={q.question}
-            onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
-          />
+          <div className="question-title">
+            <Input
+              placeholder="Введите вопрос"
+              value={q.question}
+              onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
+            />
+            <MinusCircleOutlined onClick={() => removeQuestion(qIndex)} />
+          </div>
+
           {q.options.map((option, oIndex) => (
             <Space key={oIndex} className="option-container">
-              {q.type === 'single' && <Radio />}
-              {q.type === 'multiple' && <Checkbox />}
+              {/* {q.type === 'single' && <Radio />}
+              {q.type === 'multiple' && <Checkbox />} */}
               <Input
                 placeholder="Введите вариант"
                 value={option}
@@ -64,21 +70,26 @@ const SurveyCreate = () => {
               <MinusCircleOutlined onClick={() => removeOption(qIndex, oIndex)} />
             </Space>
           ))}
-          <Button type="dashed" onClick={() => addOption(qIndex)} icon={<PlusOutlined />}>
-            Добавить вариант
-          </Button>
-          <MinusCircleOutlined onClick={() => removeQuestion(qIndex)} />
+          <div>
+
+            <Button type="dashed" onClick={() => addOption(qIndex)} icon={<PlusOutlined />}>
+              Добавить вариант
+            </Button>
+            <Button type="dashed" onClick={() => addOption(qIndex)} icon={<PlusOutlined />}>
+              E
+            </Button>
+          </div>
+
         </div>
       ))}
-      <Button type="dashed" onClick={() => addQuestion('single')} icon={<PlusOutlined />}>
-        Добавить вопрос (один ответ)
-      </Button>
-      <Button type="dashed" onClick={() => addQuestion('multiple')} icon={<PlusOutlined />}>
-        Добавить вопрос (несколько ответов)
-      </Button>
-      <Button type="primary" onClick={handleSave}>
-        Сохранить опрос
-      </Button>
+      <div className="active_btns">
+        <Button type="primary" onClick={() => addQuestion('single')} icon={<PlusOutlined />}>
+          Добавить вопрос
+        </Button>
+        <Button type="primary" onClick={handleSave}>
+          Сохранить опрос
+        </Button>
+      </div>
     </div>
   );
 };
