@@ -4,16 +4,31 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
 import 'antd/dist/reset.css';
 import './styles.css';
+import SurveyEdit from './components/SurveyEdit';
 
 const favoriteLinks = [];
-const setFavoriteLinks = () => {};
+const setFavoriteLinks = () => { };
 const menu = [];
-const setOpenMenu = () => {};
+const setOpenMenu = () => { };
 
 const routerAuntf = createBrowserRouter([
   {
     path: "/",
     element: <App favoriteLinks={favoriteLinks} setFavoriteLinks={setFavoriteLinks} menu={menu} setOpenMenu={setOpenMenu} />,
+    children: [
+      {
+        path: "/demo",
+        element: <div>Login Page</div>,
+      },
+      {
+        path: "/edit/:id",
+        element: <SurveyEdit />,
+      }
+    ]
+  },
+  {
+    path: "*",
+    element: <>Страница не найлена</>,
   },
 ]);
 
