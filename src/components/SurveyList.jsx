@@ -1,37 +1,16 @@
 import React from 'react';
-import { Button, List, Space, message } from 'antd';
-import { Link } from 'react-router-dom';
-import { CopyOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 
-function SurveyList({ surveys }) {
-  const copyLink = (id) => {
-    navigator.clipboard.writeText(`${window.location.origin}/respond/${id}`)
-    .then(() => message.success('Ссылка скопирована!'));
-  };
-
+const SurveyList = () => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div>
       <h1>Список опросов</h1>
-      <List
-        itemLayout="horizontal"
-        dataSource={surveys}
-        renderItem={survey => (
-          <List.Item
-            actions={[
-              <Button icon={<EditOutlined />} onClick={() => window.location.href=`/edit/${survey.id}`}>Редактировать</Button>,
-              <Button icon={<CopyOutlined />} onClick={() => copyLink(survey.id)}>Копировать ссылку</Button>,
-              <Link to={`/responses/${survey.id}`}><Button icon={<EyeOutlined />}>Просмотреть ответы</Button></Link>
-            ]}
-          >
-            <List.Item.Meta
-              title={survey.title}
-            />
-          </List.Item>
-        )}
-      />
-      <Link to="/edit/new"><Button type="primary" style={{ marginTop: 16 }}>Создать опрос</Button></Link>
+      <Button>Редактировать</Button>
+      <Button>Скопировать ссылку</Button>
+      <Button>Посмотреть ответы</Button>
+      <Button type="primary">Создать опрос</Button>
     </div>
   );
-}
+};
 
 export default SurveyList;
