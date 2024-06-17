@@ -4,12 +4,14 @@ import { NavLink } from 'react-router-dom';
 
 const SurveyList = () => {
   return (
-    <div>
+    <div className="container">
       <h1>Список опросов</h1>
-      <NavLink to={"/demo"}>Редактировать</NavLink>
-      <NavLink to={"/edit"}>Скопировать ссылку</NavLink>
-      <NavLink>Посмотреть ответы</NavLink>
-      <NavLink type="primary">Создать опрос</NavLink>
+      <div className="buttons-container">
+        <NavLink to="/demo"><Button>Редактировать</Button></NavLink>
+        <NavLink to="/edit"><Button>Скопировать ссылку</Button></NavLink>
+        <NavLink to="#"><Button>Посмотреть ответы</Button></NavLink>
+        <NavLink to="#"><Button type="primary">Создать опрос</Button></NavLink>
+      </div>
     </div>
   );
 };
