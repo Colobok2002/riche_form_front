@@ -29,7 +29,7 @@ h1, h3 {
   max-width: 600px;
 }
 
-.answer-container {
+.option-container {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
@@ -38,7 +38,7 @@ h1, h3 {
 
 .buttons-container {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   gap: 10px;
   margin-top: 20px;
 }
@@ -46,4 +46,5 @@ h1, h3 {
 .create-survey-button {
   margin-top: 20px;
 }
+
 

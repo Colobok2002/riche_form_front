@@ -7,10 +7,18 @@ const SurveyList = () => {
     <div className="container">
       <h1>Список опросов</h1>
       <div className="buttons-container">
-        <NavLink to="/demo"><Button>Редактировать</Button></NavLink>
-        <NavLink to="/edit"><Button>Скопировать ссылку</Button></NavLink>
-        <NavLink to="#"><Button>Посмотреть ответы</Button></NavLink>
-        <NavLink to="#"><Button type="primary">Создать опрос</Button></NavLink>
+        <NavLink to="/edit/1">
+          <Button type="primary">Редактировать</Button>
+        </NavLink>
+        <NavLink to="/copy-link">
+          <Button>Скопировать ссылку</Button>
+        </NavLink>
+        <NavLink to="/responses">
+          <Button>Посмотреть ответы</Button>
+        </NavLink>
+        <NavLink to="/create">
+          <Button type="primary" className="create-survey-button">Создать опрос</Button>
+        </NavLink>
       </div>
     </div>
   );
