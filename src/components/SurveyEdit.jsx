@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { Button, Input, Space } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { useParams } from 'react-router-dom';
 
 const SurveyEdit = () => {
+
+  const { id } = useParams()
+
   const [questions, setQuestions] = useState([{ id: 1, question: '', answers: [''] }]);
   const [draggingItem, setDraggingItem] = useState(null);
 
@@ -71,7 +75,12 @@ const SurveyEdit = () => {
 
   return (
     <div className="container">
-      <h1>Редактирование опроса</h1>
+      {id ? (
+        <h1>Редактирование опроса</h1>
+
+      ) : (
+        <h1>Создать опрос</h1>
+      )}
       {questions.map((q, qIndex) => (
         <div
           key={q.id}

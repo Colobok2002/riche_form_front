@@ -26,7 +26,7 @@ const App = ({ favoriteLinks, setFavoriteLinks, menu, setOpenMenu }) => {
         <Route path="/edit/:id" element={<SurveyEdit />} />
         <Route path="/respond/:id" element={<SurveyRespond survey={mockSurvey} />} />
         <Route path="/responses/:id" element={<SurveyResponses responses={mockResponses} />} />
-        <Route path="/create" element={<SurveyCreate />} />
+        <Route path="/create" element={<SurveyEdit />} />
       </Routes>
       <Outlet />
     </>
