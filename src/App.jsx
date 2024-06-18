@@ -9,7 +9,7 @@ import SurveyCreate from './components/SurveyCreate/SurveyCreate';
 const App = ({ favoriteLinks, setFavoriteLinks, menu, setOpenMenu }) => {
   const mockSurvey = {
     questions: [
-      { question: 'Ваше любимое цвет?', answers: ['Красный', 'Синий', 'Зелёный'] },
+      { question: 'Ваше любимый цвет?', answers: ['Красный', 'Синий', 'Зелёный'] },
       { question: 'Ваше любимое животное?', answers: ['Кошка', 'Собака', 'Птица'] }
     ]
   };

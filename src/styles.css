@@ -10,43 +10,46 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 
-/* 
+
 .container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   padding: 20px;
-  height: 100vh;
+  margin: 20px;
 }
 
-h1, h3 {
-  color: #333;
-  text-align: center;
-}
-
-.question-container, .response-container {
-  margin-bottom: 20px;
-  width: 100%;
-  max-width: 600px;
-}
-
-.option-container {
+.header {
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
-  gap: 10px;
+  width: 100%;
 }
 
-.buttons-container {
+.survey-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.survey {
+  display: flex;
+  flex-direction: column;
+  background: rgb(147, 216, 228);
+  padding: 10px;
+  border-radius: 10px;
+  width: calc(33.333% - 20px);
+}
+
+.survey-title {
+  margin-bottom: 10px;
+}
+
+.button-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 20px;
 }
 
 .create-survey-button {
-  margin-top: 20px;
+  margin-left: 10px;
 }
-
- */

@@ -1,53 +1,44 @@
 import React, { useState } from 'react';
 import { Button } from 'antd';
 import { NavLink } from 'react-router-dom';
+import '../styles.css';
 
 const SurveyList = () => {
-
   const [surveys, setSurveys] = useState([
     {
-      "title": "Вопрос о косметикие"
+      "title": "Вопрос о косметике"
     },
     {
       "title": "Метрики с сайта"
     },
     {
-      "title": "Гйцуцуцйу"
+      "title": "Что-нибудь"
     }
-  ])
+  ]);
+
   return (
-    <div className="container" >
-      <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+    <div className="container">
+      <div className="header">
         <h1>Список опросов</h1>
-        {/* <div className="buttons-container">
-        <NavLink to="/edit/1">
-        <Button type="primary">Редактировать</Button>
-        </NavLink>
-        <NavLink to="/copy-link">
-        <Button>Скопировать ссылку</Button>
-        </NavLink>
-        <NavLink to="/responses">
-        <Button>Посмотреть ответы</Button>
-        </NavLink>
-        
-        </div> */}
         <NavLink to="/create">
           <Button type="primary" className="create-survey-button">Создать опрос</Button>
         </NavLink>
       </div>
-      <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", gap: 10 }}>
+      <div className="survey-list">
         {surveys.map((survey, key) => (
-          <div className="survey" key={key} style={{ display: "flex", background: "red", flexDirection: "column", padding: 10, borderRadius: 10 }}>
-            {survey.title}
-            <NavLink to="/edit/1">
-              <Button type="primary">Редактировать</Button>
-            </NavLink>
-            <NavLink to="/copy-link">
-              <Button>Скопировать ссылку</Button>
-            </NavLink>
-            <NavLink to="/responses">
-              <Button>Посмотреть ответы</Button>
-            </NavLink>
+          <div className="survey" key={key}>
+            <div className="survey-title">{survey.title}</div>
+            <div className="button-group">
+              <NavLink to={`/edit/${key + 1}`}>
+                <Button type="primary">Редактировать</Button>
+              </NavLink>
+              <NavLink to={`/copy-link/${key + 1}`}>
+                <Button>Скопировать ссылку</Button>
+              </NavLink>
+              <NavLink to={`/responses/${key + 1}`}>
+                <Button>Посмотреть ответы</Button>
+              </NavLink>
+            </div>
           </div>
         ))}
       </div>
@@ -56,3 +47,4 @@ const SurveyList = () => {
 };
 
 export default SurveyList;
+

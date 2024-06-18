@@ -1,9 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
-const SurveyResponses = ({ responses }) => {
+const SurveyResponses = () => {
+  const { id } = useParams();
+  const [responses, setResponses] = useState([]);
+
+  useEffect(() => {
+    const fetchedResponses = [
+      ['Ответ 1 на вопрос 1', 'Ответ 1 на вопрос 2'],
+      ['Ответ 2 на вопрос 1', 'Ответ 2 на вопрос 2']
+    ];
+    setResponses(fetchedResponses);
+  }, [id]);
+
   return (
     <div className="container">
-      <h1>Ответы на опрос</h1>
+      <h1>Ответы на опрос {id}</h1>
       {responses.map((response, index) => (
         <div key={index} className="response-container">
           <h3>Ответ {index + 1}</h3>
@@ -19,5 +31,3 @@ const SurveyResponses = ({ responses }) => {
 };
 
 export default SurveyResponses;
-
-

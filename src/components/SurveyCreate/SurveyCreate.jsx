@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Input, Space, Radio, Checkbox } from 'antd';
+import { Button, Input, Space } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-
-import "./SurveyCreate.scss"
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import "./SurveyCreate.scss";
 
 const SurveyCreate = () => {
-  const [questions, setQuestions] = useState([{ type: 'single', question: '', options: [''] }]);
+  const [questions, setQuestions] = useState([{ id: '1', type: 'single', question: '', options: [''] }]);
 
   const handleQuestionChange = (index, value) => {
     const newQuestions = [...questions];
@@ -20,7 +20,8 @@ const SurveyCreate = () => {
   };
 
   const addQuestion = (type) => {
-    setQuestions([...questions, { type, question: '', options: [''] }]);
+    const id = (questions.length + 1).toString();
+    setQuestions([...questions, { id, type, question: '', options: [''] }]);
   };
 
   const removeQuestion = (index) => {
@@ -44,44 +45,60 @@ const SurveyCreate = () => {
     console.log('Сохраненные данные:', questions);
   };
 
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const newQuestions = Array.from(questions);
+    const [reorderedQuestion] = newQuestions.splice(result.source.index, 1);
+    newQuestions.splice(result.destination.index, 0, reorderedQuestion);
+    setQuestions(newQuestions);
+  };
+
   return (
     <div className="container">
       <h1>Создание нового опроса</h1>
-      {questions.map((q, qIndex) => (
-        <div key={qIndex} className="question-container">
-          <div className="question-title">
-            <Input
-              placeholder="Введите вопрос"
-              value={q.question}
-              onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
-            />
-            <MinusCircleOutlined onClick={() => removeQuestion(qIndex)} />
-          </div>
-
-          {q.options.map((option, oIndex) => (
-            <Space key={oIndex} className="option-container">
-              {/* {q.type === 'single' && <Radio />}
-              {q.type === 'multiple' && <Checkbox />} */}
-              <Input
-                placeholder="Введите вариант"
-                value={option}
-                onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
-              />
-              <MinusCircleOutlined onClick={() => removeOption(qIndex, oIndex)} />
-            </Space>
-          ))}
-          <div>
-
-            <Button type="dashed" onClick={() => addOption(qIndex)} icon={<PlusOutlined />}>
-              Добавить вариант
-            </Button>
-            <Button type="dashed" onClick={() => addOption(qIndex)} icon={<PlusOutlined />}>
-              E
-            </Button>
-          </div>
-
-        </div>
-      ))}
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="questions">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {questions.map((q, qIndex) => (
+                <Draggable key={q.id} draggableId={q.id} index={qIndex}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="question-container"
+                    >
+                      <div className="question-title">
+                        <Input
+                          placeholder="Введите вопрос"
+                          value={q.question}
+                          onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
+                        />
+                        <MinusCircleOutlined onClick={() => removeQuestion(qIndex)} />
+                      </div>
+                      {q.options.map((option, oIndex) => (
+                        <Space key={oIndex} className="option-container">
+                          <Input
+                            placeholder="Введите вариант"
+                            value={option}
+                            onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
+                          />
+                          <MinusCircleOutlined onClick={() => removeOption(qIndex, oIndex)} />
+                        </Space>
+                      ))}
+                      <Button type="dashed" onClick={() => addOption(qIndex)} icon={<PlusOutlined />}>
+                        Добавить вариант
+                      </Button>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
       <div className="active_btns">
         <Button type="primary" onClick={() => addQuestion('single')} icon={<PlusOutlined />}>
           Добавить вопрос

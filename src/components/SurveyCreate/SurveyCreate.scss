@@ -5,31 +5,31 @@
     align-items: start;
     justify-content: start;
     gap: 20px;
-
+  
     .question-container {
-
-        background: #f0ebf8;
-        padding: 10px;
-        border-radius: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        width: 100%;
-
-        .question-title {
-            display: flex;
-            flex-direction: row;
-            gap: 10px;
-        }
-    }
-
-    .active_btns {
+      background: #f0ebf8;
+      padding: 10px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+  
+      .question-title {
         display: flex;
         flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
         gap: 10px;
-        width: 100%;
+      }
     }
-}
+  
+    .active_btns {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+    }
+  }
+  
