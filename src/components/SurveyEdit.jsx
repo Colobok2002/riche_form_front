@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Input, Space } from 'antd';
+import { Button, Input, Select, Space } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 
@@ -7,7 +7,7 @@ const SurveyEdit = () => {
 
   const { id } = useParams()
 
-  const [questions, setQuestions] = useState([{ id: 1, question: '', answers: [''] }]);
+  const [questions, setQuestions] = useState([{ id: 1, question: '', answers: [{ data: '', type: "multi" }] }]);
   const [draggingItem, setDraggingItem] = useState(null);
 
   const handleQuestionChange = (index, value) => {
@@ -18,7 +18,7 @@ const SurveyEdit = () => {
 
   const handleAnswerChange = (qIndex, aIndex, value) => {
     const newQuestions = [...questions];
-    newQuestions[qIndex].answers[aIndex] = value;
+    newQuestions[qIndex].answers[aIndex].data = value;
     setQuestions(newQuestions);
   };
 
@@ -34,7 +34,7 @@ const SurveyEdit = () => {
 
   const addAnswer = (qIndex) => {
     const newQuestions = [...questions];
-    newQuestions[qIndex].answers.push('');
+    newQuestions[qIndex].answers.push({ data: '', type: "multi" });
     setQuestions(newQuestions);
   };
 
@@ -100,11 +100,14 @@ const SurveyEdit = () => {
               />
               <MinusCircleOutlined onClick={() => removeQuestion(qIndex)} />
             </div>
+              <Select style={{width : 300}}options={[{ value: 'multi', label: <span>Мнодество ответов</span> },{ value: 'one', label: <span>Один ответ</span> },{ value: 'text', label: <span>Текст</span> }]} ></Select>
             {q.answers.map((a, aIndex) => (
               <Space key={aIndex} style={{ display: 'flex', marginBottom: 8 }}>
+                {console.log(a)}
+                {a.type}
                 <Input
                   placeholder="Введите ответ"
-                  value={a}
+                  value={a.data}
                   onChange={(e) => handleAnswerChange(qIndex, aIndex, e.target.value)}
                 />
                 <MinusCircleOutlined onClick={() => removeAnswer(qIndex, aIndex)} />
