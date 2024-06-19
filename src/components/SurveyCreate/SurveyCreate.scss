@@ -8,7 +8,7 @@
 
   .question-container {
     background: #f0ebf8;
-    padding: 10px;
+    padding: 20px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -28,41 +28,5 @@
     align-items: start;
     gap: 10px;
     width: 100%;
-  }
-
-  .dropdown {
-    position: relative;
-    display: inline-block;
-
-    .dropdown-menu {
-      display: flex;
-      flex-direction: column;
-      position: absolute;
-      background-color: #fff;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-      padding: 10px;
-      z-index: 1;
-
-      .dropdown-item {
-        padding: 5px 10px;
-        cursor: pointer;
-        &:hover {
-          background-color: #f1f1f1;
-        }
-
-        .dropdown-submenu {
-          display: flex;
-          flex-direction: column;
-          padding-left: 20px;
-          .dropdown-item {
-            padding: 5px 10px;
-            cursor: pointer;
-            &:hover {
-              background-color: #f1f1f1;
-            }
-          }
-        }
-      }
-    }
   }
 }

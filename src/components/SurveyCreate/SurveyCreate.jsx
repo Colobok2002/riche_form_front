@@ -1,19 +1,13 @@
 import React, { useState } from 'react';
-import { Button, Input, Space } from 'antd';
-import { MinusCircleOutlined, PlusOutlined, DownOutlined } from '@ant-design/icons';
-import './SurveyCreate.scss';
+import { Button, Input, Space, Radio, Checkbox, Select } from 'antd';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+
+import "./SurveyCreate.scss"
+
+const { Option } = Select;
 
 const SurveyCreate = () => {
-  const [questions, setQuestions] = useState([]);
-  const [dropdowns, setDropdowns] = useState({});
-
-  const toggleDropdown = (key) => {
-    setDropdowns({ ...dropdowns, [key]: !dropdowns[key] });
-  };
-
-  const addQuestion = (type) => {
-    setQuestions([...questions, { type, question: '', options: [''] }]);
-  };
+  const [questions, setQuestions] = useState([{ type: 'single', question: '', options: [''] }]);
 
   const handleQuestionChange = (index, value) => {
     const newQuestions = [...questions];
@@ -27,14 +21,29 @@ const SurveyCreate = () => {
     setQuestions(newQuestions);
   };
 
-  const addOption = (qIndex) => {
+  const handleTypeChange = (index, value) => {
     const newQuestions = [...questions];
-    newQuestions[qIndex].options.push('');
+    newQuestions[index].type = value;
+    if (value === 'text') {
+      newQuestions[index].options = [''];
+    } else {
+      newQuestions[index].options = [''];
+    }
     setQuestions(newQuestions);
+  };
+
+  const addQuestion = (type) => {
+    setQuestions([...questions, { type, question: '', options: [''] }]);
   };
 
   const removeQuestion = (index) => {
     const newQuestions = questions.filter((_, qIndex) => qIndex !== index);
+    setQuestions(newQuestions);
+  };
+
+  const addOption = (qIndex) => {
+    const newQuestions = [...questions];
+    newQuestions[qIndex].options.push('');
     setQuestions(newQuestions);
   };
 
@@ -59,10 +68,22 @@ const SurveyCreate = () => {
               value={q.question}
               onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
             />
+            <Select
+              value={q.type}
+              onChange={(value) => handleTypeChange(qIndex, value)}
+              style={{ width: 200, marginLeft: 10 }}
+            >
+              <Option value="single">Вопрос с одним ответом</Option>
+              <Option value="multiple">Вопрос с несколькими ответами</Option>
+              <Option value="text">Вопрос где есть вариант в котором человек сам заносит ответ</Option>
+            </Select>
             <MinusCircleOutlined onClick={() => removeQuestion(qIndex)} />
           </div>
-          {q.options.map((option, oIndex) => (
+
+          {q.type !== 'text' && q.options.map((option, oIndex) => (
             <Space key={oIndex} className="option-container">
+              {q.type === 'single' && <Radio />}
+              {q.type === 'multiple' && <Checkbox />}
               <Input
                 placeholder="Введите вариант"
                 value={option}
@@ -71,43 +92,30 @@ const SurveyCreate = () => {
               <MinusCircleOutlined onClick={() => removeOption(qIndex, oIndex)} />
             </Space>
           ))}
-          <Button type="dashed" onClick={() => addOption(qIndex)} icon={<PlusOutlined />}>
-            Добавить вариант
-          </Button>
-        </div>
-      ))}
-      <div className="active_btns">
-        <div className="dropdown">
-          <Button onClick={() => toggleDropdown('questionType')}>
-            Добавить вопрос <DownOutlined />
-          </Button>
-          {dropdowns.questionType && (
-            <div className="dropdown-menu">
-              <div className="dropdown-item">
-                Вопрос с одним ответом
-                <Button type="link" onClick={(e) => { e.stopPropagation(); toggleDropdown('singleOptions'); }}>
-                  <DownOutlined />
-                </Button>
-                {dropdowns.singleOptions && (
-                  <div className="dropdown-submenu">
-                    <div className="dropdown-item" onClick={(e) => { e.stopPropagation(); addQuestion('single'); }}>
-                      Вариант 1
-                    </div>
-                    <div className="dropdown-item" onClick={(e) => { e.stopPropagation(); addQuestion('single'); }}>
-                      Вариант 2
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="dropdown-item" onClick={() => addQuestion('multiple')}>
-                Вопрос с несколькими ответами
-              </div>
-              <div className="dropdown-item" onClick={() => addQuestion('text')}>
-                Вопрос с текстовым ответом
-              </div>
+
+          {q.type === 'text' && (
+            <Space key={qIndex} className="option-container">
+              <Input
+                placeholder="Введите ваш ответ"
+                value={q.options[0]}
+                onChange={(e) => handleOptionChange(qIndex, 0, e.target.value)}
+              />
+            </Space>
+          )}
+
+          {q.type !== 'text' && (
+            <div>
+              <Button type="dashed" onClick={() => addOption(qIndex)} icon={<PlusOutlined />}>
+                Добавить вариант
+              </Button>
             </div>
           )}
         </div>
+      ))}
+      <div className="active_btns">
+        <Button type="primary" onClick={() => addQuestion('single')} icon={<PlusOutlined />}>
+          Добавить вопрос
+        </Button>
         <Button type="primary" onClick={handleSave}>
           Сохранить опрос
         </Button>
@@ -117,3 +125,4 @@ const SurveyCreate = () => {
 };
 
 export default SurveyCreate;
+
