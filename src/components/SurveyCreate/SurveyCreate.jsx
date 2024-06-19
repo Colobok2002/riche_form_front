@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { Button, Input, Space } from 'antd';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import "./SurveyCreate.scss";
+import { MinusCircleOutlined, PlusOutlined, DownOutlined } from '@ant-design/icons';
+import './SurveyCreate.scss';
 
 const SurveyCreate = () => {
-  const [questions, setQuestions] = useState([{ id: '1', type: 'single', question: '', options: [''] }]);
+  const [questions, setQuestions] = useState([]);
+  const [dropdowns, setDropdowns] = useState({});
+
+  const toggleDropdown = (key) => {
+    setDropdowns({ ...dropdowns, [key]: !dropdowns[key] });
+  };
+
+  const addQuestion = (type) => {
+    setQuestions([...questions, { type, question: '', options: [''] }]);
+  };
 
   const handleQuestionChange = (index, value) => {
     const newQuestions = [...questions];
@@ -19,19 +27,14 @@ const SurveyCreate = () => {
     setQuestions(newQuestions);
   };
 
-  const addQuestion = (type) => {
-    const id = (questions.length + 1).toString();
-    setQuestions([...questions, { id, type, question: '', options: [''] }]);
+  const addOption = (qIndex) => {
+    const newQuestions = [...questions];
+    newQuestions[qIndex].options.push('');
+    setQuestions(newQuestions);
   };
 
   const removeQuestion = (index) => {
     const newQuestions = questions.filter((_, qIndex) => qIndex !== index);
-    setQuestions(newQuestions);
-  };
-
-  const addOption = (qIndex) => {
-    const newQuestions = [...questions];
-    newQuestions[qIndex].options.push('');
     setQuestions(newQuestions);
   };
 
@@ -45,64 +48,66 @@ const SurveyCreate = () => {
     console.log('Сохраненные данные:', questions);
   };
 
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-    const newQuestions = Array.from(questions);
-    const [reorderedQuestion] = newQuestions.splice(result.source.index, 1);
-    newQuestions.splice(result.destination.index, 0, reorderedQuestion);
-    setQuestions(newQuestions);
-  };
-
   return (
     <div className="container">
       <h1>Создание нового опроса</h1>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="questions">
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              {questions.map((q, qIndex) => (
-                <Draggable key={q.id} draggableId={q.id} index={qIndex}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      className="question-container"
-                    >
-                      <div className="question-title">
-                        <Input
-                          placeholder="Введите вопрос"
-                          value={q.question}
-                          onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
-                        />
-                        <MinusCircleOutlined onClick={() => removeQuestion(qIndex)} />
-                      </div>
-                      {q.options.map((option, oIndex) => (
-                        <Space key={oIndex} className="option-container">
-                          <Input
-                            placeholder="Введите вариант"
-                            value={option}
-                            onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
-                          />
-                          <MinusCircleOutlined onClick={() => removeOption(qIndex, oIndex)} />
-                        </Space>
-                      ))}
-                      <Button type="dashed" onClick={() => addOption(qIndex)} icon={<PlusOutlined />}>
-                        Добавить вариант
-                      </Button>
+      {questions.map((q, qIndex) => (
+        <div key={qIndex} className="question-container">
+          <div className="question-title">
+            <Input
+              placeholder="Введите вопрос"
+              value={q.question}
+              onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
+            />
+            <MinusCircleOutlined onClick={() => removeQuestion(qIndex)} />
+          </div>
+          {q.options.map((option, oIndex) => (
+            <Space key={oIndex} className="option-container">
+              <Input
+                placeholder="Введите вариант"
+                value={option}
+                onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
+              />
+              <MinusCircleOutlined onClick={() => removeOption(qIndex, oIndex)} />
+            </Space>
+          ))}
+          <Button type="dashed" onClick={() => addOption(qIndex)} icon={<PlusOutlined />}>
+            Добавить вариант
+          </Button>
+        </div>
+      ))}
+      <div className="active_btns">
+        <div className="dropdown">
+          <Button onClick={() => toggleDropdown('questionType')}>
+            Добавить вопрос <DownOutlined />
+          </Button>
+          {dropdowns.questionType && (
+            <div className="dropdown-menu">
+              <div className="dropdown-item">
+                Вопрос с одним ответом
+                <Button type="link" onClick={(e) => { e.stopPropagation(); toggleDropdown('singleOptions'); }}>
+                  <DownOutlined />
+                </Button>
+                {dropdowns.singleOptions && (
+                  <div className="dropdown-submenu">
+                    <div className="dropdown-item" onClick={(e) => { e.stopPropagation(); addQuestion('single'); }}>
+                      Вариант 1
                     </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
+                    <div className="dropdown-item" onClick={(e) => { e.stopPropagation(); addQuestion('single'); }}>
+                      Вариант 2
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="dropdown-item" onClick={() => addQuestion('multiple')}>
+                Вопрос с несколькими ответами
+              </div>
+              <div className="dropdown-item" onClick={() => addQuestion('text')}>
+                Вопрос с текстовым ответом
+              </div>
             </div>
           )}
-        </Droppable>
-      </DragDropContext>
-      <div className="active_btns">
-        <Button type="primary" onClick={() => addQuestion('single')} icon={<PlusOutlined />}>
-          Добавить вопрос
-        </Button>
+        </div>
         <Button type="primary" onClick={handleSave}>
           Сохранить опрос
         </Button>
