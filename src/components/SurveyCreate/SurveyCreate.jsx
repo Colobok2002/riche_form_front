@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Input, Space, Radio, Checkbox, Select } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 import "./SurveyCreate.scss";
+import getApi from '../../services/api';
+import { ApiUrl } from '../../../Constaints';
 
 const { Option } = Select;
 
 const SurveyCreate = () => {
+
+  const { api } = getApi()
+
   const [questions, setQuestions] = useState([{ type: 'single', question: '', options: [''] }]);
+  const [draggingItem, setDraggingItem] = useState(null);
 
   const handleQuestionChange = (index, value) => {
     const newQuestions = [...questions];
@@ -18,14 +24,14 @@ const SurveyCreate = () => {
   const handleOptionChange = (qIndex, oIndex, value, isChecked) => {
     const newQuestions = [...questions];
     if (questions[qIndex].type === 'single') {
-        newQuestions[qIndex].options = newQuestions[qIndex].options.map((_, idx) => idx === oIndex ? value : '');
+      newQuestions[qIndex].options = newQuestions[qIndex].options.map((_, idx) => idx === oIndex ? value : '');
     } else if (questions[qIndex].type === 'multiple') {
-        newQuestions[qIndex].options[oIndex] = isChecked ? 'Отмечено' : '';
+      newQuestions[qIndex].options[oIndex] = isChecked ? 'Отмечено' : '';
     } else {
-        newQuestions[qIndex].options[oIndex] = value;
+      newQuestions[qIndex].options[oIndex] = value;
     }
     setQuestions(newQuestions);
-};
+  };
 
   const handleTypeChange = (index, value) => {
     const newQuestions = [...questions];
@@ -56,14 +62,74 @@ const SurveyCreate = () => {
   };
 
   const handleSave = () => {
-    console.log('Сохраненные данные:', questions);
+    console.log(questions)
+    const data = {
+      "name": "Тестовый опрос",
+      // "id": ,
+      "data": {
+        "1": {
+          "question": "Назовите ваш пол этот теперь первый",
+          "answers": { "1": { "answer": "М" }, "2": { "answer": "Ж" } },
+        },
+        "2": {
+          "id": 2,
+          "question": "Назовите ваш имя (Изм вопрос)",
+          "answers": {
+            "1": { "answer": "Илья" },
+            "2": { "answer": "Вадим" },
+            "3": { "answer": "Миша" },
+          },
+        },
+        "3": {
+          "question": "Новый вопрос",
+          "answers": { "1": { "answer": "М" }, "2": { "answer": "Ж" } },
+        },
+      },
+    }
+    console.log(data)
+    // api.post(ApiUrl + "records/create-survey", data).then((response) => {
+    //   console.log(response.data)
+    // })
+    // console.log('Сохраненные данные:', questions);
+  };
+
+
+  const handleDragStart = (e, item) => {
+    setDraggingItem(item);
+    e.dataTransfer.setData('text/plain', '');
+  };
+
+  const handleDragEnd = () => {
+    setDraggingItem(null);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e, targetItem) => {
+    const currentIndex = questions.indexOf(draggingItem);
+    const targetIndex = questions.indexOf(targetItem);
+
+    if (currentIndex !== -1 && targetIndex !== -1) {
+      const updatedQuestions = [...questions];
+      updatedQuestions.splice(currentIndex, 1);
+      updatedQuestions.splice(targetIndex, 0, draggingItem);
+      setQuestions(updatedQuestions);
+    }
   };
 
   return (
     <div className="container">
       <h1>Создание нового опроса</h1>
       {questions.map((q, qIndex) => (
-        <div key={qIndex} className="question-container">
+        <div key={qIndex} className="question-container"
+          draggable="true"
+          onDragStart={(e) => handleDragStart(e, q)}
+          onDragEnd={handleDragEnd}
+          onDragOver={handleDragOver}
+          onDrop={(e) => handleDrop(e, q)}
+        >
           <div className="question-title">
             <Input
               placeholder="Введите вопрос"
@@ -97,14 +163,14 @@ const SurveyCreate = () => {
                 </Radio>
               ) : (
                 <Checkbox
-                    checked={option.includes('Отмечено')}
-                    onChange={(e) => handleOptionChange(qIndex, oIndex, 'Отмечено', e.target.checked)}
+                  checked={option.includes('Отмечено')}
+                  onChange={(e) => handleOptionChange(qIndex, oIndex, 'Отмечено', e.target.checked)}
                 >
-                    <Input
-                        placeholder="Введите вариант"
-                        value={option.replace('Отмечено', '')}
-                        onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value, e.target.checked)}
-                    />
+                  <Input
+                    placeholder="Введите вариант"
+                    value={option.replace('Отмечено', '')}
+                    onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value, e.target.checked)}
+                  />
                 </Checkbox>
 
               )}
