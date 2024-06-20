@@ -41,8 +41,15 @@ const SurveyCreate = () => {
   };
 
   const addQuestion = (type) => {
-    setQuestions([...questions, { type, question: '', options: [''] }]);
+    const newQuestion = {
+        type,
+        question: '',
+        options: [''],
+        id: Math.random().toString(36).substr(2, 9)
+    };
+    setQuestions([...questions, newQuestion]);
   };
+
 
   const removeQuestion = (index) => {
     const newQuestions = questions.filter((_, qIndex) => qIndex !== index);
@@ -108,22 +115,24 @@ const SurveyCreate = () => {
   };
 
   const handleDrop = (e, targetItem) => {
-    const currentIndex = questions.indexOf(draggingItem);
-    const targetIndex = questions.indexOf(targetItem);
+    const currentIndex = questions.findIndex(item => item.id === draggingItem.id);
+    const targetIndex = questions.findIndex(item => item.id === targetItem.id);
 
-    if (currentIndex !== -1 && targetIndex !== -1) {
-      const updatedQuestions = [...questions];
-      updatedQuestions.splice(currentIndex, 1);
-      updatedQuestions.splice(targetIndex, 0, draggingItem);
-      setQuestions(updatedQuestions);
+    if (currentIndex !== -1 && targetIndex !== -1 && currentIndex !== targetIndex) {
+        const updatedQuestions = [...questions];
+        updatedQuestions.splice(currentIndex, 1);
+        updatedQuestions.splice(targetIndex, 0, draggingItem); 
+
+        setQuestions(updatedQuestions);
     }
+    setDraggingItem(null);
   };
 
   return (
     <div className="container">
       <h1>Создание нового опроса</h1>
       {questions.map((q, qIndex) => (
-        <div key={qIndex} className="question-container"
+        <div key={q.id} className="question-container"
           draggable="true"
           onDragStart={(e) => handleDragStart(e, q)}
           onDragEnd={handleDragEnd}
