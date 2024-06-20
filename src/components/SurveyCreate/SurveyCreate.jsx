@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Input, Space, Radio, Checkbox, Select } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
-import "./SurveyCreate.scss"
+import "./SurveyCreate.scss";
 
 const { Option } = Select;
 
@@ -15,20 +15,22 @@ const SurveyCreate = () => {
     setQuestions(newQuestions);
   };
 
-  const handleOptionChange = (qIndex, oIndex, value) => {
+  const handleOptionChange = (qIndex, oIndex, value, isChecked) => {
     const newQuestions = [...questions];
-    newQuestions[qIndex].options[oIndex] = value;
+    if (questions[qIndex].type === 'single') {
+        newQuestions[qIndex].options = newQuestions[qIndex].options.map((_, idx) => idx === oIndex ? value : '');
+    } else if (questions[qIndex].type === 'multiple') {
+        newQuestions[qIndex].options[oIndex] = isChecked ? 'Отмечено' : '';
+    } else {
+        newQuestions[qIndex].options[oIndex] = value;
+    }
     setQuestions(newQuestions);
-  };
+};
 
   const handleTypeChange = (index, value) => {
     const newQuestions = [...questions];
     newQuestions[index].type = value;
-    if (value === 'text') {
-      newQuestions[index].options = [''];
-    } else {
-      newQuestions[index].options = [''];
-    }
+    newQuestions[index].options = [''];
     setQuestions(newQuestions);
   };
 
@@ -75,20 +77,37 @@ const SurveyCreate = () => {
             >
               <Option value="single">Вопрос с одним ответом</Option>
               <Option value="multiple">Вопрос с несколькими ответами</Option>
-              <Option value="text">Вопрос где есть вариант в котором человек сам заносит ответ</Option>
+              <Option value="text">Текстовый вопрос</Option>
             </Select>
             <MinusCircleOutlined onClick={() => removeQuestion(qIndex)} />
           </div>
 
           {q.type !== 'text' && q.options.map((option, oIndex) => (
             <Space key={oIndex} className="option-container">
-              {q.type === 'single' && <Radio />}
-              {q.type === 'multiple' && <Checkbox />}
-              <Input
-                placeholder="Введите вариант"
-                value={option}
-                onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
-              />
+              {q.type === 'single' ? (
+                <Radio
+                  checked={option !== ''}
+                  onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
+                >
+                  <Input
+                    placeholder="Введите вариант"
+                    value={option}
+                    onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
+                  />
+                </Radio>
+              ) : (
+                <Checkbox
+                    checked={option.includes('Отмечено')}
+                    onChange={(e) => handleOptionChange(qIndex, oIndex, 'Отмечено', e.target.checked)}
+                >
+                    <Input
+                        placeholder="Введите вариант"
+                        value={option.replace('Отмечено', '')}
+                        onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value, e.target.checked)}
+                    />
+                </Checkbox>
+
+              )}
               <MinusCircleOutlined onClick={() => removeOption(qIndex, oIndex)} />
             </Space>
           ))}
@@ -125,4 +144,3 @@ const SurveyCreate = () => {
 };
 
 export default SurveyCreate;
-
