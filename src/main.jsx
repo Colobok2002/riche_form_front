@@ -5,10 +5,9 @@ import App from './App';
 import 'antd/dist/reset.css';
 import './styles.css';
 import SurveyList from './components/SurveyList';
-import SurveyEdit from './components/SurveyEdit';
 import SurveyRespond from './components/SurveyRespond';
 import SurveyResponses from './components/SurveyResponses';
-import SurveyCreate from './components/SurveyCreate/SurveyCreate';
+import SurveyAbout from './components/SurveyAbout/SurveyAbout';
 
 const mockSurvey = {
   questions: [
@@ -28,8 +27,12 @@ const router = createBrowserRouter([
     element: <SurveyList />,
   },
   {
-    path: "/edit/:id",
-    element: <SurveyEdit />,
+    path: "/edit/:idSurvey",
+    element: <SurveyAbout />,
+  },
+  {
+    path: "/create",
+    element: <SurveyAbout />,
   },
   {
     path: "/respond/:id",
@@ -38,10 +41,6 @@ const router = createBrowserRouter([
   {
     path: "/responses/:id",
     element: <SurveyResponses responses={mockResponses} />,
-  },
-  {
-    path: "/create",
-    element: <SurveyCreate />,
   },
   {
     path: "*",
