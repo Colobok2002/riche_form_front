@@ -20,7 +20,6 @@ const SurveyAbout = () => {
   const [surveyName, setSurveyName] = useState("")
 
   const handleQuestionChange = (index, value) => {
-    console.log(index)
     const newQuestions = { ...questions };
     newQuestions[index].question = value;
     setQuestions(newQuestions);
@@ -114,6 +113,7 @@ const SurveyAbout = () => {
     }
     const responseData = {
       "name": surveyName,
+      "id": idSurvey,
       "data": questions
 
     }
