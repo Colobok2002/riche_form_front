@@ -12,42 +12,46 @@ const SurveyCreate = () => {
 
   const { api } = getApi()
 
-  const [questions, setQuestions] = useState([{ type: 'single', question: '', options: [''] }]);
+  const [questions, setQuestions] = useState({ 1: { type: 'single', question: '', options: [''] } });
   const [draggingItem, setDraggingItem] = useState(null);
 
   const handleQuestionChange = (index, value) => {
-    const newQuestions = [...questions];
+    console.log(index)
+    const newQuestions = { ...questions };
     newQuestions[index].question = value;
     setQuestions(newQuestions);
   };
 
-  const handleOptionChange = (qIndex, oIndex, value, isChecked) => {
-    const newQuestions = [...questions];
-    if (questions[qIndex].type === 'single') {
-      newQuestions[qIndex].options = newQuestions[qIndex].options.map((_, idx) => idx === oIndex ? value : '');
-    } else if (questions[qIndex].type === 'multiple') {
-      newQuestions[qIndex].options[oIndex] = isChecked ? 'Отмечено' : '';
+  const handleOptionChange = (ordering, oIndex, value, isChecked) => {
+    const newQuestions = {...questions};
+    if (questions[ordering].type === 'single') {
+      newQuestions[ordering].options = newQuestions[ordering].options.map((_, idx) => idx === oIndex ? value : '');
+    } else if (questions[ordering].type === 'multiple') {
+      newQuestions[ordering].options[oIndex] = isChecked ? 'Отмечено' : '';
     } else {
-      newQuestions[qIndex].options[oIndex] = value;
+      newQuestions[ordering].options[oIndex] = value;
     }
     setQuestions(newQuestions);
   };
 
   const handleTypeChange = (index, value) => {
-    const newQuestions = [...questions];
+    const newQuestions = { ...questions };
     newQuestions[index].type = value;
     newQuestions[index].options = [''];
     setQuestions(newQuestions);
   };
 
   const addQuestion = (type) => {
+
+    const oldState = { ...questions }
     const newQuestion = {
-        type,
-        question: '',
-        options: [''],
-        id: Math.random().toString(36).substr(2, 9)
+      type,
+      question: '',
+      options: [''],
+      id: Math.random().toString(36).substr(2, 9)
     };
-    setQuestions([...questions, newQuestion]);
+    oldState[Object.keys(oldState).length + 1] = newQuestion
+    setQuestions(oldState);
   };
 
 
@@ -57,13 +61,13 @@ const SurveyCreate = () => {
   };
 
   const addOption = (qIndex) => {
-    const newQuestions = [...questions];
+    const newQuestions = { ...questions };
     newQuestions[qIndex].options.push('');
     setQuestions(newQuestions);
   };
 
   const removeOption = (qIndex, oIndex) => {
-    const newQuestions = [...questions];
+    const newQuestions = { ...questions };
     newQuestions[qIndex].options = newQuestions[qIndex].options.filter((_, optIndex) => optIndex !== oIndex);
     setQuestions(newQuestions);
   };
@@ -119,11 +123,11 @@ const SurveyCreate = () => {
     const targetIndex = questions.findIndex(item => item.id === targetItem.id);
 
     if (currentIndex !== -1 && targetIndex !== -1 && currentIndex !== targetIndex) {
-        const updatedQuestions = [...questions];
-        updatedQuestions.splice(currentIndex, 1);
-        updatedQuestions.splice(targetIndex, 0, draggingItem); 
+      const updatedQuestions = { ...questions };
+      updatedQuestions.splice(currentIndex, 1);
+      updatedQuestions.splice(targetIndex, 0, draggingItem);
 
-        setQuestions(updatedQuestions);
+      setQuestions(updatedQuestions);
     }
     setDraggingItem(null);
   };
@@ -131,8 +135,8 @@ const SurveyCreate = () => {
   return (
     <div className="container">
       <h1>Создание нового опроса</h1>
-      {questions.map((q, qIndex) => (
-        <div key={q.id} className="question-container"
+      {Object.keys(questions).map((ordering, qIndex) => (
+        <div key={ordering} className="question-container"
           draggable="true"
           onDragStart={(e) => handleDragStart(e, q)}
           onDragEnd={handleDragEnd}
@@ -142,64 +146,64 @@ const SurveyCreate = () => {
           <div className="question-title">
             <Input
               placeholder="Введите вопрос"
-              value={q.question}
-              onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
+              value={questions[ordering].question}
+              onChange={(e) => handleQuestionChange(ordering, e.target.value)}
             />
             <Select
-              value={q.type}
-              onChange={(value) => handleTypeChange(qIndex, value)}
+              value={questions[ordering].type}
+              onChange={(value) => handleTypeChange(ordering, value)}
               style={{ width: 200, marginLeft: 10 }}
             >
               <Option value="single">Вопрос с одним ответом</Option>
               <Option value="multiple">Вопрос с несколькими ответами</Option>
               <Option value="text">Текстовый вопрос</Option>
             </Select>
-            <MinusCircleOutlined onClick={() => removeQuestion(qIndex)} />
+            <MinusCircleOutlined onClick={() => removeQuestion(ordering)} />
           </div>
 
-          {q.type !== 'text' && q.options.map((option, oIndex) => (
+          {questions[ordering].type !== 'text' && questions[ordering].options.map((option, oIndex) => (
             <Space key={oIndex} className="option-container">
-              {q.type === 'single' ? (
+              {questions[ordering].type === 'single' ? (
                 <Radio
                   checked={option !== ''}
-                  onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
+                  onChange={(e) => handleOptionChange(ordering, oIndex, e.target.value)}
                 >
                   <Input
                     placeholder="Введите вариант"
                     value={option}
-                    onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
+                    onChange={(e) => handleOptionChange(ordering, oIndex, e.target.value)}
                   />
                 </Radio>
               ) : (
                 <Checkbox
                   checked={option.includes('Отмечено')}
-                  onChange={(e) => handleOptionChange(qIndex, oIndex, 'Отмечено', e.target.checked)}
+                  onChange={(e) => handleOptionChange(ordering, oIndex, 'Отмечено', e.target.checked)}
                 >
                   <Input
                     placeholder="Введите вариант"
                     value={option.replace('Отмечено', '')}
-                    onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value, e.target.checked)}
+                    onChange={(e) => handleOptionChange(ordering, oIndex, e.target.value, e.target.checked)}
                   />
                 </Checkbox>
 
               )}
-              <MinusCircleOutlined onClick={() => removeOption(qIndex, oIndex)} />
+              <MinusCircleOutlined onClick={() => removeOption(ordering, oIndex)} />
             </Space>
           ))}
 
-          {q.type === 'text' && (
-            <Space key={qIndex} className="option-container">
+          {questions[ordering].type === 'text' && (
+            <Space className="option-container">
               <Input
                 placeholder="Введите ваш ответ"
-                value={q.options[0]}
-                onChange={(e) => handleOptionChange(qIndex, 0, e.target.value)}
+                value={questions[ordering].options[0]}
+                onChange={(e) => handleOptionChange(ordering, 0, e.target.value)}
               />
             </Space>
           )}
 
-          {q.type !== 'text' && (
+          {questions[ordering].type !== 'text' && (
             <div>
-              <Button type="dashed" onClick={() => addOption(qIndex)} icon={<PlusOutlined />}>
+              <Button type="dashed" onClick={() => addOption(ordering)} icon={<PlusOutlined />}>
                 Добавить вариант
               </Button>
             </div>
