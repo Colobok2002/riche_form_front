@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'antd';
 import { NavLink } from 'react-router-dom';
 import '../styles.css';
 
 const SurveyList = () => {
+
   const [surveys, setSurveys] = useState([
     {
       "title": "Вопрос о косметике"
@@ -15,6 +16,11 @@ const SurveyList = () => {
       "title": "Что-нибудь"
     }
   ]);
+
+  useEffect(() => {
+    // Тут получаешь данные и записывваешь в surveys
+  }, []);
+  
 
   return (
     <div className="container">
