@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { Button, Input, Space, Radio, Checkbox, Select } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
@@ -15,7 +15,7 @@ const SurveyAbout = () => {
 
   const { idSurvey } = useParams()
 
-  const [questions, setQuestions] = useState({ 1: { type: 'single', question: '', answers: { "1": { "answer": "" } } } });
+  const [questions, setQuestions] = useState({ 1: { question_type: 'single', question: '', answers: { "1": { "answer": "" } } } });
   const [draggingItem, setDraggingItem] = useState(null);
   const [surveyName, setSurveyName] = useState("")
 
@@ -25,6 +25,16 @@ const SurveyAbout = () => {
     setQuestions(newQuestions);
   };
 
+
+  useLayoutEffect(() => {
+    if (idSurvey) {
+      api.get(ApiUrl + "records/get-survey?survey_id=" + idSurvey).then((response) => {
+        setQuestions(response.data.data)
+        setSurveyName(response.data.name)
+      })
+    }
+  }, [idSurvey]);
+
   const handleAnswersChange = (ordering, orderingAnsver, value) => {
     const newQuestions = { ...questions };
     questions[ordering].answers[orderingAnsver].answer = value;
@@ -33,7 +43,7 @@ const SurveyAbout = () => {
 
   const handleSelektAnsver = (ordering, orderingAnsver) => {
     const newQuestions = { ...questions };
-    if (newQuestions[ordering].type === "single") {
+    if (newQuestions[ordering].question_type === "single") {
       for (let key in newQuestions[ordering].answers) {
         if (newQuestions[ordering].answers.hasOwnProperty(key) && key != orderingAnsver) {
           newQuestions[ordering].answers[key].selected = false;
@@ -53,15 +63,15 @@ const SurveyAbout = () => {
 
   const handleTypeChange = (index, value) => {
     const newQuestions = { ...questions };
-    newQuestions[index].type = value;
+    newQuestions[index].question_type = value;
     setQuestions(newQuestions);
   };
 
-  const addQuestion = (type) => {
+  const addQuestion = (question_type) => {
 
     const oldState = { ...questions }
     const newQuestion = {
-      type: type,
+      question_type: question_type,
       question: '',
       answers: { "1": { "answer": "" } }
     }
@@ -89,40 +99,16 @@ const SurveyAbout = () => {
   };
 
   const handleSave = () => {
-    const data = {
-      "name": "Тестовый опрос",
-      "data": {
-        "1": {
-          "question": "Назовите ваш пол этот теперь первый",
-          "answers": { "1": { "answer": "М" }, "2": { "answer": "Ж" } },
-        },
-        "2": {
-          "id": 2,
-          "question": "Назовите ваш имя (Изм вопрос)",
-          "answers": {
-            "1": { "answer": "Илья" },
-            "2": { "answer": "Вадим" },
-            "3": { "answer": "Миша" },
-          },
-        },
-        "3": {
-          "question": "Новый вопрос",
-          "answers": { "1": { "answer": "М" }, "2": { "answer": "Ж" } },
-        },
-      },
-    }
+
     const responseData = {
       "name": surveyName,
       "id": idSurvey,
       "data": questions
 
     }
-    console.log(data)
-    console.log(responseData)
-    // api.post(ApiUrl + "records/create-survey", data).then((response) => {
-    //   console.log(response.data)
-    // })
-    // console.log('Сохраненные данные:', questions);
+    api.post(ApiUrl + "records/create-survey", responseData).then((response) => {
+      console.log(response.data)
+    })
   };
 
 
@@ -182,7 +168,7 @@ const SurveyAbout = () => {
                 onChange={(e) => handleQuestionChange(ordering, e.target.value)}
               />
               <Select
-                value={questions[ordering].type}
+                value={questions[ordering].question_type}
                 onChange={(value) => handleTypeChange(ordering, value)}
                 style={{ width: 200, marginLeft: 10 }}
               >
@@ -193,9 +179,9 @@ const SurveyAbout = () => {
               <MinusCircleOutlined onClick={() => removeQuestion(ordering)} />
             </div>
 
-            {questions[ordering].type !== 'text' && Object.keys(questions[ordering].answers).map((orderingAnsver, oIndex) => (
+            {questions[ordering].question_type !== 'text' && Object.keys(questions[ordering].answers).map((orderingAnsver, oIndex) => (
               <Space key={oIndex} className="option-container">
-                {questions[ordering].type === 'single' ? (
+                {questions[ordering].question_type === 'single' ? (
                   <Radio
                     checked={questions[ordering].answers[orderingAnsver]?.selected}
                     onChange={() => handleSelektAnsver(ordering, orderingAnsver)}
@@ -217,7 +203,7 @@ const SurveyAbout = () => {
               </Space>
             ))}
 
-            {questions[ordering].type === 'text' && (
+            {questions[ordering].question_type === 'text' && (
               <Space className="option-container">
                 <Input
                   placeholder="Введите ваш ответ"
@@ -227,7 +213,7 @@ const SurveyAbout = () => {
               </Space>
             )}
 
-            {questions[ordering].type !== 'text' && (
+            {questions[ordering].question_type !== 'text' && (
               <div>
                 <Button type="dashed" onClick={() => addAnswers(ordering)} icon={<PlusOutlined />}>
                   Добавить вариант
