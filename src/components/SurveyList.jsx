@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'antd';
 import { NavLink } from 'react-router-dom';
 import '../styles.css';
+import getApi from '../services/api';
+import { ApiUrl } from '../../Constaints';
 
 const SurveyList = () => {
+  const { api } = getApi();
 
   const [surveys, setSurveys] = useState([
     {
@@ -18,7 +21,9 @@ const SurveyList = () => {
   ]);
 
   useEffect(() => {
-    // Тут получаешь данные и записывваешь в surveys
+    api.get(ApiUrl + 'records/get-all-surveys').then((response) => {
+      setSurveys(response.data);
+    });
   }, []);
   
 
