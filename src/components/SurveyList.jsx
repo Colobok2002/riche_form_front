@@ -37,17 +37,20 @@ const SurveyList = () => {
       </div>
       <div className="survey-list">
         {surveys.map((survey, key) => (
-          <div className="survey" key={key}>
+          <div className="survey" key={survey.id}>
             <div className="survey-title">{survey.title}</div>
             <div className="button-group">
-              <NavLink to={`/edit/${key + 1}`}>
+              <NavLink to={`/edit/${survey.id}`}>
                 <Button type="primary">Редактировать</Button>
               </NavLink>
-              <NavLink to={`/copy-link/${key + 1}`}>
+              <NavLink to={`/copy-link/${survey.id}`}>
                 <Button>Скопировать ссылку</Button>
               </NavLink>
-              <NavLink to={`/responses/${key + 1}`}>
+              <NavLink to={`/responses/${survey.id}`}>
                 <Button>Посмотреть ответы</Button>
+              </NavLink>
+              <NavLink to={`/edit-responses/${survey.id}`}>
+                <Button>Редактировать ответы</Button>
               </NavLink>
             </div>
           </div>

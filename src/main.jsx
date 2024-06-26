@@ -8,6 +8,7 @@ import SurveyList from './components/SurveyList';
 import SurveyRespond from './components/SurveyRespond';
 import SurveyResponses from './components/SurveyResponses';
 import SurveyAbout from './components/SurveyAbout/SurveyAbout';
+import EditResponses from './components/EditResponses';
 
 const mockSurvey = {
   questions: [
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
   {
     path: "/responses/:id",
     element: <SurveyResponses responses={mockResponses} />,
+  },
+  {
+    path: "/edit-responses/:idSurvey",
+    element: <EditResponses />,
   },
   {
     path: "*",
